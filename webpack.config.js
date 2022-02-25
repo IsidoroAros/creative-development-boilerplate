@@ -17,10 +17,13 @@ const dirStyles = path.join(__dirname, "styles");
 const dirNode = "node_modules";
 
 module.exports = {
+  // Entry point of the application
   entry: [path.join(dirApp, "index.js"), path.join(dirStyles, "index.scss")],
   resolve: {
     modules: [dirApp, dirShared, dirStyles, dirNode],
   },
+
+  // Plugins the app depends on
   plugins: [
     new webpack.DefinePlugin({
       IS_DEVELOPMENT,
@@ -49,13 +52,15 @@ module.exports = {
           plugins: [
             ["gifsicle", { interlaced: true }],
             ["jpegtran", { progressive: true }],
-            ["optipng", { optimizationLevel: 5 }],
+            ["optipng", { optimizationLevel: 8 }],
           ],
         },
       },
     }),
   ],
+
   module: {
+    // Rules for modules (configure loaders, parser options, etc...)
     rules: [
       {
         test: /\.js$/,
@@ -96,6 +101,40 @@ module.exports = {
             return "[hash].[ext]";
           },
         },
+      },
+
+      {
+        test: /\.(jpe?g|png|gif|svg|webp)$/i,
+        use: [
+          {
+            loader: ImageMinimizerPlugin.loader,
+            options: {
+              minimizer: {
+                implementation: ImageMinimizerPlugin.imageminMinify,
+                options: {
+                  plugins: [
+                    "imagemin-gifsicle",
+                    "imagemin-mozjpeg",
+                    "imagemin-pngquant",
+                    "imagemin-svgo",
+                  ],
+                },
+              },
+            },
+          },
+        ],
+      },
+
+      {
+        test: /\.(glsl|frag|vert)$/,
+        loader: "raw-loader",
+        exclude: /node_modules/,
+      },
+
+      {
+        test: /\.(glsl|frag|vert)$/,
+        loader: "glslify-loader",
+        exclude: /node_modules/,
       },
     ],
   },
