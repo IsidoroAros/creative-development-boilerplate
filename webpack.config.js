@@ -1,5 +1,8 @@
 const path = require('path')
 const webpack = require('webpack')
+
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+
 // Plugin to resolve copies of files
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
@@ -56,7 +59,9 @@ module.exports = {
           ]
         }
       }
-    })
+    }),
+
+    new CleanWebpackPlugin()
   ],
 
   module: {
