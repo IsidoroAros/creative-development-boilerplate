@@ -1,15 +1,16 @@
 const path = require('path')
 const webpack = require('webpack')
 
+// Plugin to remove unnecessary files for production build
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
-
 // Plugin to resolve copies of files
 const CopyWebpackPlugin = require('copy-webpack-plugin')
-
+// Plugin to output an unique css file
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-
 // Plugin to resolve image minimization
 const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin')
+// Plugin to improve files minification
+const TerserPlugin = require('terser-webpack-plugin')
 
 const IS_DEVELOPMENT = (process.env.NODE_END = 'dev')
 
@@ -28,6 +29,7 @@ module.exports = {
 
   // Plugins the app depends on
   plugins: [
+
     new webpack.DefinePlugin({
       IS_DEVELOPMENT
     }),
@@ -62,6 +64,7 @@ module.exports = {
     }),
 
     new CleanWebpackPlugin()
+
   ],
 
   module: {
@@ -142,5 +145,10 @@ module.exports = {
         exclude: /node_modules/
       }
     ]
+  },
+
+  optimization: {
+    minimize: true,
+    minimizer: [new TerserPlugin()]
   }
 }
